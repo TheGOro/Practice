@@ -10,6 +10,7 @@
 
 
 #include <vector>
+#include <stack>
 #include <string>
 #include <iostream>
 #include <math.h>
@@ -106,6 +107,73 @@ public:
 				(((int) (x / pow(10.0, length - i - 1))) % 10)) return false;
 		}
 		return true;
+	}
+
+/*
+ * Valid Parentheses
+ *
+ * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+ *
+ * The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+ *
+ * http://leetcode.com/onlinejudge#question_20
+ */
+    bool isValid(string s) {
+        stack<char> brackets;
+        for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
+            if (*it == '(' || *it == '[' || *it == '{') {
+                brackets.push(*it);
+            } else if (*it == ')' || *it == ']' || *it == '}') {
+                if (brackets.empty()) return false;
+                if ((brackets.top() == '(' && *it == ')') ||
+                    (brackets.top() == '[' && *it == ']') ||
+                    (brackets.top() == '{' && *it == '}')) brackets.pop();
+                else return false;
+            }
+        }
+        if (brackets.empty()) return true;
+        else return false;
+    }
+
+/*
+ * Generate Parentheses
+ *
+ * Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+ *
+ * For example, given n = 3, a solution set is:
+ *
+ * "((()))", "(()())", "(())()", "()(())", "()()()"
+ *
+ * http://leetcode.com/onlinejudge#question_22
+ */
+private:
+	void appendParenthesis(const string& prefix, const unsigned int opened, const unsigned int closed, const unsigned int n, vector<string>& result) {
+		if (closed == opened && closed == n) {
+			result.push_back(prefix);
+			return;
+		}
+		if (opened > closed) {
+			if (opened < n) {
+				string left(prefix);
+				left.append("(");
+				appendParenthesis(left, opened + 1, closed, n, result);
+			}
+			string right(prefix);
+			right.append(")");
+			appendParenthesis(right, opened, closed + 1, n, result);
+		} else {
+			string left(prefix);
+			left.append("(");
+			appendParenthesis(left, opened + 1, closed, n, result);
+		}
+
+	}
+
+public:
+	vector<string> generateParenthesis(int n) {
+		vector<string> result;
+		appendParenthesis("(", 1, 0, n, result);
+		return result;
 	}
 
 /*
