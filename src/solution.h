@@ -65,7 +65,6 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_7
  */
-public:
     int reverse(int x) {
     	bool negative = false;
     	if (x < 0) {
@@ -81,6 +80,33 @@ public:
     	result *= negative ? -1 : 1;
     	return result;
     }
+
+/*
+ * Palindrome Number
+ *
+ * Determine whether an integer is a palindrome. Do this without extra space.
+ *
+ * Some hints:
+ * Could negative integers be palindromes? (ie, -1)
+ *
+ * If you are thinking of converting the integer to string, note the restriction of using extra space.
+ *
+ * You could also try reversing an integer. However, if you have solved the problem "Reverse Integer", you know that the reversed integer might overflow. How would you handle such case?
+ *
+ * There is a more generic way of solving this problem.
+ *
+ * http://leetcode.com/onlinejudge#question_9
+ */
+	bool isPalindrome(int x) {
+		if (x < 0) return false;
+		int length = log10(x) + 1;
+		int checkrange = length >> 1;
+		for (int i = 0; i < checkrange; ++i) {
+			if ((((int) (x / pow(10.0, i))) % 10) !=
+				(((int) (x / pow(10.0, length - i - 1))) % 10)) return false;
+		}
+		return true;
+	}
 };
 
 #endif
