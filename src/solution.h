@@ -18,9 +18,16 @@
 
 using namespace std;
 
+struct ListNode {
+	int val;
+	ListNode* next;
+	ListNode(int x) : val(x), next(NULL) {}
+};
+
 class Solution {
 /*
  * Two Sum
+ *
  * Given an array of integers, find two numbers such that they add up to a specific target number.
  * The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
  *
@@ -177,7 +184,37 @@ public:
 	}
 
 /*
+ * Swap Nodes in Pairs
+ *
+ * Given a linked list, swap every two adjacent nodes and return its head.
+ *
+ * For example,
+ * Given 1->2->3->4, you should return the list as 2->1->4->3.
+ *
+ * Your algorithm should use only constant space. You may not modify the values in the list, only nodes itself can be changed.
+ *
+ * http://leetcode.com/onlinejudge#question_24
+ */
+    ListNode *swapPairs(ListNode *head) {
+    	ListNode *first, *i = head;
+    	ListNode *j, *k, *l = NULL;
+    	while (i != NULL) {
+    		j = i->next;
+    		if (j == NULL) break;
+    		k = j->next;
+    		if (k == NULL) l = NULL;
+    		else l = k->next;
+    		j->next = i;
+    		i->next = l == NULL ? k : l;
+    		if (i == head) first = j;
+    		i = k;
+    	}
+		return first;
+    }
+
+/*
  * Length of Last Word
+ *
  * Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of last word in the string.
  *
  * If the last word does not exist, return 0.
@@ -206,6 +243,123 @@ public:
         	}
         }
         return count;
+    }
+
+/*
+ * Add Binary
+ *
+ * Given two binary strings, return their sum (also a binary string).
+ *
+ * For example,
+ * a = "11"
+ * b = "1"
+ * Return "100".
+ *
+ * http://leetcode.com/onlinejudge#question_67
+ */
+private:
+    string& prepend(string& target, const char value) {
+        target.insert(0, 1, value);
+        return target;
+    }
+    bool truth(string& cont, string::const_iterator& it) {
+        if (it <= cont.begin() - 1) {
+            return false;
+        } else if (*it == '0') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+public:
+    string addBinary(string a, string b) {
+        bool carry = false;
+        string result("");
+        for (string::const_iterator i = a.end() - 1, j = b.end() - 1;
+             i != a.begin() - 1 || j != b.begin() - 1;
+             i = i != a.begin() - 1 ? --i : i, j = j != b.begin() - 1 ? --j : j)
+        {
+            bool bi = truth(a, i);
+            bool bj = truth(b, j);
+            if (bi && bj) {
+                if (carry) {
+                    prepend(result, '1');
+                } else {
+                    prepend(result, '0');
+                    carry = true;
+                }
+            } else if (!bi && !bj) {
+                if (carry) {
+                    prepend(result, '1');
+                    carry = false;
+                } else {
+                    prepend(result, '0');
+                }
+            } else {
+                if (carry) {
+                    prepend(result, '0');
+                } else {
+                    prepend(result, '1');
+                }
+            }
+        }
+        if (carry) prepend(result, '1');
+        return result;
+    }
+
+/*
+ * Search a 2D Matrix
+ *
+ * Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+ *
+ * Integers in each row are sorted from left to right.
+ * The first integer of each row is greater than the last integer of the previous row.
+ * For example,
+ *
+ * Consider the following matrix:
+ *
+ * [
+ *  [1,   3,  5,  7],
+ *  [10, 11, 16, 20],
+ *  [23, 30, 34, 50]
+ * ]
+ * Given target = 3, return true.
+ *
+ * http://leetcode.com/onlinejudge#question_74
+ */
+    bool searchMatrix(vector<vector<int> > &matrix, int target) {
+    	int top = 0;
+    	int bottom = matrix.size() - 1;
+    	while (top <= bottom) {
+    		int sum = top + bottom;
+    		int i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
+    		vector<int>& row = matrix[i];
+    		int low = row.front();
+    		int high = row.back();
+    		if (target == low || target == high) {
+    			return true;
+    		} else if (target > low && target < high) {
+    			int left = 0;
+    			int right = row.size() - 1;
+    			while (left <= right) {
+        			sum = left + right;
+        			i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
+        			if (row[i] == target) {
+        				return true;
+        			} else if (target < row[i]) {
+        				right = i - 1;
+        			} else if (target > row[i]) {
+        				left = i + 1;
+        			}
+    			}
+    			return false;
+    		} else if (target < low) {
+    			bottom = i - 1;
+    		} else if (target > high) {
+    			top = i + 1;
+    		}
+    	}
+    	return false;
     }
 };
 
