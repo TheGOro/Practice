@@ -213,6 +213,28 @@ public:
     }
 
 /*
+ * Pow(x, n)
+ *
+ * Implement pow(x, n).
+ *
+ * http://leetcode.com/onlinejudge#question_50
+ */
+    double pow(double x, int n) {
+    	double result = 1.0;
+    	int highestBit = (sizeof(int) << 3) - 1;
+    	if (n < 0) {
+    		n *= -1;
+    		x = 1 / x;
+    	}
+    	for (int i = highestBit; !((n >> i) & 1) && i > 0; --i) --highestBit;
+    	for (int i = 0; i <= highestBit; ++i) {
+    		if ((n >> i) & 1) result *= x;
+    		x *= x;
+    	}
+    	return result;
+    }
+
+/*
  * Length of Last Word
  *
  * Given a string s consists of upper/lower-case alphabets and empty space characters ' ', return the length of last word in the string.
