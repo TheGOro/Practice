@@ -57,6 +57,38 @@ public:
     }
 
 /*
+ * Add Two Numbers
+ *
+ * You are given two linked lists representing two non-negative numbers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+ *
+ * Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+ * Output: 7 -> 0 -> 8
+ *
+ * http://leetcode.com/onlinejudge#question_2
+ */
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+    	int carry = 0;
+    	ListNode *result, *p = NULL;
+    	while (l1 != NULL || l2 != NULL || carry > 0) {
+    		if (p == NULL) {
+    			p = new ListNode(0);
+    			result = p;
+    		} else {
+    			p->next = new ListNode(0);
+    			p = p->next;
+    		}
+    		p->val += carry;
+    		p->val += l1 != NULL ? l1->val : 0;
+    		p->val += l2 != NULL ? l2->val : 0;
+    		carry = p->val / 10;
+    		p->val = p->val % 10;
+    		l1 = l1 != NULL ? l1->next : l1;
+    		l2 = l2 != NULL ? l2->next : l2;
+    	}
+    	return result;
+    }
+
+/*
  * Reverse digits of an integer.
  *
  * Example1: x = 123, return 321
