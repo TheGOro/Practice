@@ -149,6 +149,30 @@ public:
 	}
 
 /*
+ * Integer to Roman
+ *
+ * Given an integer, convert it to a roman numeral.
+ *
+ * Input is guaranteed to be within the range from 1 to 3999.
+ */
+    string intToRoman(int num) {
+    	static char romans[4][2] = {{'I','V'},{'X','L'},{'C','D'},{'M','\0'}};
+    	string result;
+    	int digits = log10(num);
+    	for (int i = digits; i >= 0; --i) {
+    		int v = ((int) (num / pow(10.0, i))) % 10;
+    		if (v == 4 || v == 9) {
+    			result.push_back(romans[i][0]);
+    			result.push_back(romans[v == 4 ? i : i + 1][v == 4 ? 1 : 0]);
+    		} else {
+    			if (v > 4) result.push_back(romans[i][1]);
+    			for (int j = v > 4 ? v - 5 : v; j > 0; --j) result.push_back(romans[i][0]);
+    		}
+    	}
+        return result;
+    }
+
+/*
  * Valid Parentheses
  *
  * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
