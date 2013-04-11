@@ -173,6 +173,36 @@ public:
     }
 
 /*
+ * Roman to Integer
+ *
+ * Given a roman numeral, convert it to an integer.
+ *
+ * Input is guaranteed to be within the range from 1 to 3999.
+ *
+ * http://leetcode.com/onlinejudge#question_13
+ */
+	int romanToInt(string s) {
+		static char romans[] = {'I', 'V', 'X', 'L', 'C', 'D', 'M'};
+		static int values[] = {1, 5, 10, 50, 100, 500, 1000};
+		int highest = 0;
+		int result = 0;
+		for (string::const_reverse_iterator it = s.rbegin(); it != s.rend(); ++it) {
+			for (int i = 0; i < (int) sizeof romans; ++i) {
+				if (*it == romans[i]) {
+					if (i < highest) {
+						result -= values[i];
+					} else {
+						result += values[i];
+					}
+					highest = highest < i ? i : highest;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+/*
  * Valid Parentheses
  *
  * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
