@@ -43,7 +43,6 @@ public:
 		vector<int> result;
 		for (vector<int>::const_iterator i = numbers.begin(); i!= numbers.end(); ++i) {
 			if (*i > target) continue;
-
 			for (vector<int>::const_iterator j = i + 1; j != numbers.end(); ++j) {
 				if (*i + *j == target) {
 					result.push_back(i - numbers.begin() + 1);
@@ -54,7 +53,7 @@ public:
 			if (result.size() != 0) break;
 		}
 		return result;
-    }
+	}
 
 /*
  * Add Two Numbers
@@ -66,27 +65,65 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_2
  */
-    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-    	int carry = 0;
-    	ListNode *result, *p = NULL;
-    	while (l1 != NULL || l2 != NULL || carry > 0) {
-    		if (p == NULL) {
-    			p = new ListNode(0);
-    			result = p;
-    		} else {
-    			p->next = new ListNode(0);
-    			p = p->next;
-    		}
-    		p->val += carry;
-    		p->val += l1 != NULL ? l1->val : 0;
-    		p->val += l2 != NULL ? l2->val : 0;
-    		carry = p->val / 10;
-    		p->val = p->val % 10;
-    		l1 = l1 != NULL ? l1->next : l1;
-    		l2 = l2 != NULL ? l2->next : l2;
-    	}
-    	return result;
-    }
+	ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+		int carry = 0;
+		ListNode *result, *p = NULL;
+		while (l1 != NULL || l2 != NULL || carry > 0) {
+			if (p == NULL) {
+				p = new ListNode(0);
+				result = p;
+			} else {
+				p->next = new ListNode(0);
+				p = p->next;
+			}
+			p->val += carry;
+			p->val += l1 != NULL ? l1->val : 0;
+			p->val += l2 != NULL ? l2->val : 0;
+			carry = p->val / 10;
+			p->val = p->val % 10;
+			l1 = l1 != NULL ? l1->next : l1;
+			l2 = l2 != NULL ? l2->next : l2;
+		}
+		return result;
+	}
+
+/*
+ * ZigZag Conversion
+ *
+ * The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+ *
+ * P   A   H   N
+ * A P L S I I G
+ * Y   I   R
+ * And then read line by line: "PAHNAPLSIIGYIR"
+ * Write the code that will take a string and make this conversion given a number of rows:
+ *
+ * string convert(string text, int nRows);
+ * convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+ *
+ * http://leetcode.com/onlinejudge#question_6
+ */
+	string convert(string s, int nRows) {
+		int len = s.length();
+		if (nRows <= 1 || nRows >= len) return s;
+		string result;
+		result.resize(len, ' ');
+		int period = nRows * 2 - 2;
+		int position[nRows];
+		position[0] = 0;
+		for (int i = 1; i < nRows; ++i) {
+			int left = len > i ? floor((len - i) / period) + 1 : 0;
+			int right = len > period - (i - 1) && i > 1 ? floor((len - (period - (i - 1))) / period) + 1 : 0;
+			position[i] = position[i - 1] + left + right;
+		}
+		for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
+			int i = it - s.begin();
+			int phase = i % period;
+			int row = phase >= nRows -  1? period - phase : phase;
+			result[position[row]++] = *it;
+		}
+		return result;
+	}
 
 /*
  * Reverse digits of an integer.
@@ -105,21 +142,21 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_7
  */
-    int reverse(int x) {
-    	bool negative = false;
-    	if (x < 0) {
-    		negative = true;
-    		x *= -1;
-    	}
-    	int result = 0;
-    	int length = log10(x);
-    	for (int i = 0; i <= length; ++i) {
-    		result *= 10;
-    		result += ((int) (x / pow(10.0, i))) % 10;
-    	}
-    	result *= negative ? -1 : 1;
-    	return result;
-    }
+	int reverse(int x) {
+		bool negative = false;
+		if (x < 0) {
+			negative = true;
+			x *= -1;
+		}
+		int result = 0;
+		int length = log10(x);
+		for (int i = 0; i <= length; ++i) {
+			result *= 10;
+			result += ((int) (x / ::pow(10.0, i))) % 10;
+		}
+		result *= negative ? -1 : 1;
+		return result;
+	}
 
 /*
  * Palindrome Number
@@ -142,8 +179,8 @@ public:
 		int length = log10(x) + 1;
 		int checkrange = length >> 1;
 		for (int i = 0; i < checkrange; ++i) {
-			if ((((int) (x / pow(10.0, i))) % 10) !=
-				(((int) (x / pow(10.0, length - i - 1))) % 10)) return false;
+			if ((((int) (x / ::pow(10.0, i))) % 10) !=
+				(((int) (x / ::pow(10.0, length - i - 1))) % 10)) return false;
 		}
 		return true;
 	}
@@ -154,23 +191,25 @@ public:
  * Given an integer, convert it to a roman numeral.
  *
  * Input is guaranteed to be within the range from 1 to 3999.
+ *
+ * http://leetcode.com/onlinejudge#question_12
  */
-    string intToRoman(int num) {
-    	static char romans[4][2] = {{'I','V'},{'X','L'},{'C','D'},{'M','\0'}};
-    	string result;
-    	int digits = log10(num);
-    	for (int i = digits; i >= 0; --i) {
-    		int v = ((int) (num / pow(10.0, i))) % 10;
-    		if (v == 4 || v == 9) {
-    			result.push_back(romans[i][0]);
-    			result.push_back(romans[v == 4 ? i : i + 1][v == 4 ? 1 : 0]);
-    		} else {
-    			if (v > 4) result.push_back(romans[i][1]);
-    			for (int j = v > 4 ? v - 5 : v; j > 0; --j) result.push_back(romans[i][0]);
-    		}
-    	}
-        return result;
-    }
+	string intToRoman(int num) {
+		static char romans[4][2] = {{'I','V'},{'X','L'},{'C','D'},{'M','\0'}};
+		string result;
+		int digits = log10(num);
+		for (int i = digits; i >= 0; --i) {
+			int v = ((int) (num / ::pow(10.0, i))) % 10;
+			if (v == 4 || v == 9) {
+				result.push_back(romans[i][0]);
+				result.push_back(romans[v == 4 ? i : i + 1][v == 4 ? 1 : 0]);
+			} else {
+				if (v > 4) result.push_back(romans[i][1]);
+				for (int j = v > 4 ? v - 5 : v; j > 0; --j) result.push_back(romans[i][0]);
+			}
+		}
+		return result;
+	}
 
 /*
  * Roman to Integer
@@ -211,22 +250,22 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_20
  */
-    bool isValid(string s) {
-        stack<char> brackets;
-        for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
-            if (*it == '(' || *it == '[' || *it == '{') {
-                brackets.push(*it);
-            } else if (*it == ')' || *it == ']' || *it == '}') {
-                if (brackets.empty()) return false;
-                if ((brackets.top() == '(' && *it == ')') ||
-                    (brackets.top() == '[' && *it == ']') ||
-                    (brackets.top() == '{' && *it == '}')) brackets.pop();
-                else return false;
-            }
-        }
-        if (brackets.empty()) return true;
-        else return false;
-    }
+	bool isValid(string s) {
+		stack<char> brackets;
+		for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
+			if (*it == '(' || *it == '[' || *it == '{') {
+				brackets.push(*it);
+			} else if (*it == ')' || *it == ']' || *it == '}') {
+				if (brackets.empty()) return false;
+				if ((brackets.top() == '(' && *it == ')') ||
+					(brackets.top() == '[' && *it == ']') ||
+					(brackets.top() == '{' && *it == '}')) brackets.pop();
+				else return false;
+			}
+		}
+		if (brackets.empty()) return true;
+		else return false;
+	}
 
 /*
  * Generate Parentheses
@@ -281,22 +320,22 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_24
  */
-    ListNode *swapPairs(ListNode *head) {
-    	ListNode *first, *i = head;
-    	ListNode *j, *k, *l = NULL;
-    	while (i != NULL) {
-    		j = i->next;
-    		if (j == NULL) break;
-    		k = j->next;
-    		if (k == NULL) l = NULL;
-    		else l = k->next;
-    		j->next = i;
-    		i->next = l == NULL ? k : l;
-    		if (i == head) first = j;
-    		i = k;
-    	}
+	ListNode *swapPairs(ListNode *head) {
+		ListNode *first, *i = head;
+		ListNode *j, *k, *l = NULL;
+		while (i != NULL) {
+			j = i->next;
+			if (j == NULL) break;
+			k = j->next;
+			if (k == NULL) l = NULL;
+			else l = k->next;
+			j->next = i;
+			i->next = l == NULL ? k : l;
+			if (i == head) first = j;
+			i = k;
+		}
 		return first;
-    }
+	}
 
 /*
  * Pow(x, n)
@@ -305,20 +344,20 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_50
  */
-    double pow(double x, int n) {
-    	double result = 1.0;
-    	int highestBit = (sizeof(int) << 3) - 1;
-    	if (n < 0) {
-    		n *= -1;
-    		x = 1 / x;
-    	}
-    	for (int i = highestBit; !((n >> i) & 1) && i > 0; --i) --highestBit;
-    	for (int i = 0; i <= highestBit; ++i) {
-    		if ((n >> i) & 1) result *= x;
-    		x *= x;
-    	}
-    	return result;
-    }
+	double pow(double x, int n) {
+		double result = 1.0;
+		int highestBit = (sizeof(int) << 3) - 1;
+		if (n < 0) {
+			n *= -1;
+			x = 1 / x;
+		}
+		for (int i = highestBit; !((n >> i) & 1) && i > 0; --i) --highestBit;
+		for (int i = 0; i <= highestBit; ++i) {
+			if ((n >> i) & 1) result *= x;
+			x *= x;
+		}
+		return result;
+	}
 
 /*
  * Length of Last Word
@@ -335,23 +374,23 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_58
  */
-    int lengthOfLastWord(const char* s) {
-    	if (s == NULL) return 0;
-        int count = 0;
-        bool reset = false;
-        for (int i = 0; s[i] != '\0'; ++i) {
-        	if (s[i] != ' '  && reset) {
-        		count = 1;
-        		reset = false;
-        	} else if (s[i] == ' ') {
-        		reset = true;
-        	} else {
-        		++count;
-        		reset = false;
-        	}
-        }
-        return count;
-    }
+	int lengthOfLastWord(const char* s) {
+		if (s == NULL) return 0;
+		int count = 0;
+		bool reset = false;
+		for (int i = 0; s[i] != '\0'; ++i) {
+			if (s[i] != ' '  && reset) {
+				count = 1;
+				reset = false;
+			} else if (s[i] == ' ') {
+				reset = true;
+			} else {
+				++count;
+				reset = false;
+			}
+		}
+		return count;
+	}
 
 /*
  * Add Binary
@@ -366,54 +405,54 @@ public:
  * http://leetcode.com/onlinejudge#question_67
  */
 private:
-    string& prepend(string& target, const char value) {
-        target.insert(0, 1, value);
-        return target;
-    }
-    bool truth(string& cont, string::const_iterator& it) {
-        if (it <= cont.begin() - 1) {
-            return false;
-        } else if (*it == '0') {
-            return false;
-        } else {
-            return true;
-        }
-    }
+	string& prepend(string& target, const char value) {
+		target.insert(0, 1, value);
+		return target;
+	}
+	bool truth(string& cont, string::const_iterator& it) {
+		if (it <= cont.begin() - 1) {
+			return false;
+		} else if (*it == '0') {
+			return false;
+		} else {
+			return true;
+		}
+	}
 public:
-    string addBinary(string a, string b) {
-        bool carry = false;
-        string result("");
-        for (string::const_iterator i = a.end() - 1, j = b.end() - 1;
-             i != a.begin() - 1 || j != b.begin() - 1;
-             i = i != a.begin() - 1 ? --i : i, j = j != b.begin() - 1 ? --j : j)
-        {
-            bool bi = truth(a, i);
-            bool bj = truth(b, j);
-            if (bi && bj) {
-                if (carry) {
-                    prepend(result, '1');
-                } else {
-                    prepend(result, '0');
-                    carry = true;
-                }
-            } else if (!bi && !bj) {
-                if (carry) {
-                    prepend(result, '1');
-                    carry = false;
-                } else {
-                    prepend(result, '0');
-                }
-            } else {
-                if (carry) {
-                    prepend(result, '0');
-                } else {
-                    prepend(result, '1');
-                }
-            }
-        }
-        if (carry) prepend(result, '1');
-        return result;
-    }
+	string addBinary(string a, string b) {
+		bool carry = false;
+		string result("");
+		for (string::const_iterator i = a.end() - 1, j = b.end() - 1;
+			i != a.begin() - 1 || j != b.begin() - 1;
+			i = i != a.begin() - 1 ? --i : i, j = j != b.begin() - 1 ? --j : j)
+		{
+			bool bi = truth(a, i);
+			bool bj = truth(b, j);
+			if (bi && bj) {
+				if (carry) {
+					prepend(result, '1');
+				} else {
+					prepend(result, '0');
+					carry = true;
+				}
+			} else if (!bi && !bj) {
+				if (carry) {
+					prepend(result, '1');
+					carry = false;
+				} else {
+					prepend(result, '0');
+				}
+			} else {
+				if (carry) {
+					prepend(result, '0');
+				} else {
+					prepend(result, '1');
+				}
+			}
+		}
+		if (carry) prepend(result, '1');
+		return result;
+	}
 
 /*
  * Search a 2D Matrix
@@ -435,40 +474,40 @@ public:
  *
  * http://leetcode.com/onlinejudge#question_74
  */
-    bool searchMatrix(vector<vector<int> > &matrix, int target) {
-    	int top = 0;
-    	int bottom = matrix.size() - 1;
-    	while (top <= bottom) {
-    		int sum = top + bottom;
-    		int i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
-    		vector<int>& row = matrix[i];
-    		int low = row.front();
-    		int high = row.back();
-    		if (target == low || target == high) {
-    			return true;
-    		} else if (target > low && target < high) {
-    			int left = 0;
-    			int right = row.size() - 1;
-    			while (left <= right) {
-        			sum = left + right;
-        			i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
-        			if (row[i] == target) {
-        				return true;
-        			} else if (target < row[i]) {
-        				right = i - 1;
-        			} else if (target > row[i]) {
-        				left = i + 1;
-        			}
-    			}
-    			return false;
-    		} else if (target < low) {
-    			bottom = i - 1;
-    		} else if (target > high) {
-    			top = i + 1;
-    		}
-    	}
-    	return false;
-    }
+	bool searchMatrix(vector<vector<int> > &matrix, int target) {
+		int top = 0;
+		int bottom = matrix.size() - 1;
+		while (top <= bottom) {
+			int sum = top + bottom;
+			int i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
+			vector<int>& row = matrix[i];
+			int low = row.front();
+			int high = row.back();
+			if (target == low || target == high) {
+				return true;
+			} else if (target > low && target < high) {
+				int left = 0;
+				int right = row.size() - 1;
+				while (left <= right) {
+					sum = left + right;
+					i = sum & 1 ? (sum >> 1) + 1 : sum >> 1;
+					if (row[i] == target) {
+						return true;
+					} else if (target < row[i]) {
+						right = i - 1;
+					} else if (target > row[i]) {
+						left = i + 1;
+					}
+				}
+				return false;
+			} else if (target < low) {
+				bottom = i - 1;
+			} else if (target > high) {
+				top = i + 1;
+			}
+		}
+		return false;
+	}
 };
 
 #endif
