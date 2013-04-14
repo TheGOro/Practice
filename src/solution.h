@@ -111,10 +111,10 @@ public:
 		int period = nRows * 2 - 2;
 		int position[nRows];
 		position[0] = 0;
-		for (int i = 1; i < nRows; ++i) {
-			int left = len > i ? floor((len - i) / period) + 1 : 0;
-			int right = len > period - (i - 1) && i > 1 ? floor((len - (period - (i - 1))) / period) + 1 : 0;
-			position[i] = position[i - 1] + left + right;
+		for (int i = 0; i < nRows - 1; ++i) {
+			int left = len >= i + 1 ? floor((len - i - 1) / period) + 1 : 0;
+			int right = len >= period + 1 - i && i > 0 ? floor((len - (period + 1 - i)) / period) + 1 : 0;
+			position[i + 1] = position[i] + left + right;
 		}
 		for (string::const_iterator it = s.begin(); it != s.end(); ++it) {
 			int i = it - s.begin();
