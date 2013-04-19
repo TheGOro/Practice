@@ -8,13 +8,14 @@
 #ifndef SOLUTION_H_
 #define SOLUTION_H_
 
-
 #include <vector>
 #include <stack>
 #include <string>
 #include <iostream>
 #include <math.h>
 #include <cmath>
+#include <limits>
+#include <bitset>
 
 using namespace std;
 
@@ -23,6 +24,14 @@ struct ListNode {
 	ListNode* next;
 	ListNode(int x) : val(x), next(NULL) {}
 };
+
+struct TreeNode {
+	int val;
+	TreeNode *left;
+	TreeNode *right;
+	TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 
 class Solution {
 /*
@@ -156,6 +165,51 @@ public:
 		}
 		result *= negative ? -1 : 1;
 		return result;
+	}
+
+/*
+ * String to Integer (atoi)
+ *
+ * Implement atoi to convert a string to an integer.
+ *
+ * Hint: Carefully consider all possible input cases. If you want a challenge, please do not see below and ask yourself what are the possible input cases.
+ *
+ * Notes: It is intended for this problem to be specified vaguely (ie, no given input specs). You are responsible to gather all the input requirements up front.
+ *
+ * http://leetcode.com/onlinejudge#question_8
+ */
+	// Not valid and not complete solution!
+	int atoi(const char *str) {
+		int result = 0;
+		int prev = 0;
+		bool begin = false;
+		int sign = 0;
+		for (int i = 0; str[i] != '\0'; ++i) {
+			if (!begin && str[i] == 32) {
+				continue;
+			} else if (!begin && sign == 0 && (str[i] == 43 || str[i] == 45)) {
+				begin = true;
+				sign = str[i] == 45 ? -1 : 1;
+			} else if (str[i] >= 48 && str[i] <= 57 ) {
+				if (begin == false && sign == 0) {
+					begin = true;
+					sign = 1;
+				}
+				result *= 10;
+				result += str[i] - 48;
+				if ((prev > 0 && result < 0) || (prev < 0 && result > 0)) {
+					if (prev > 0) return sign * numeric_limits<int>::min();
+					else return sign * numeric_limits<int>::min();
+				}
+				prev = result;
+			} else {
+				break;
+			}
+		}
+		result *= sign;
+		if (result >= numeric_limits<int>::max()) return numeric_limits<int>::max();
+		else if (result <= numeric_limits<int>::min()) return numeric_limits<int>::min();
+		else return result;
 	}
 
 /*
@@ -336,6 +390,40 @@ public:
 		}
 		return first;
 	}
+/*
+ * Valid Sudoku
+ * Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
+ *
+ * The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
+ *
+ * http://leetcode.com/onlinejudge#question_36
+ */
+	bool isValidSudoku(vector<vector<char> > &board) {
+		int checkTable[8] = {0}; // Bitset is not available
+		for (vector<vector<char> >::const_iterator i = board.begin(); i != board.end(); ++i) {
+			for (vector<char>::const_iterator j = i->begin(); j != i->end(); ++j) {
+				if (*j == '.') continue;
+				else {
+					int value = *j - 48;
+					int row = i - board.begin();
+					int column = j - i->begin();
+					int positions[3] = {
+						row * 9 + value - 1,
+						81 + column * 9 + value - 1,
+						162 + (((int) (floor(row / 3))) * 3  + ((int) (floor(column / 3)))) * 9 + value - 1
+					};
+					for (int v = 0; v < 3; ++v) {
+						int part = floor(positions[v] / 32);
+						int shift = positions[v] % 32;
+
+						if ((checkTable[part] >> shift) & 1) return false; 	// Test
+						checkTable[part] = checkTable[part] | (1 << shift); // Set
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 /*
  * Pow(x, n)
@@ -507,6 +595,72 @@ public:
 			}
 		}
 		return false;
+	}
+
+/*
+ * Interleaving String
+ * Given s1, s2, s3, find whether s3 is formed by the interleaving of s1 and s2.
+ *
+ * For example,
+ * Given:
+ * s1 = "aabcc",
+ * s2 = "dbbca",
+ *
+ * When s3 = "aadbbcbcac", return true.
+ * When s3 = "aadbbbaccc", return false.
+ *
+ * http://leetcode.com/onlinejudge#question_97
+ */
+	// Work in progress
+	bool isInterleave(string s1, string s2, string s3) {
+		return false;
+	}
+
+/*
+ * Same Tree
+ * Given two binary trees, write a function to check if they are equal or not.
+ *
+ * Two binary trees are considered equal if they are structurally identical and the nodes have the same value.
+ *
+ * http://leetcode.com/onlinejudge#question_100
+ */
+	bool isSameTree(TreeNode *p, TreeNode *q) {
+		if (p == NULL && q == NULL) return true;
+		if (p == NULL || q == NULL) return false;
+		if (p->val != q->val) return false;
+		return isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+	}
+
+/*
+ * Maximum Depth of Binary Tree
+ * Given a binary tree, find its maximum depth.
+ *
+ * The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+ *
+ * http://leetcode.com/onlinejudge#question_104
+ */
+	int maxDepth(TreeNode *root) {
+		if (root == NULL) return 0;
+		int left = maxDepth(root->left);
+		int right = maxDepth(root->right);
+		return 1 + (left > right ? left : right);
+	}
+
+/*
+ * Minimum Depth of Binary Tree
+ * Given a binary tree, find its minimum depth.
+ *
+ * The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+ *
+ * http://leetcode.com/onlinejudge#question_111
+ */
+	int minDepth(TreeNode *root) {
+		if (root == NULL) return 0;
+		else if (root->left == NULL) return 1 + minDepth(root->right);
+		else if (root->right == NULL) return 1 + minDepth(root->left);
+		int left = minDepth(root->left);
+		int right = minDepth(root->right);
+		return 1 + (left < right ? left : right);
 	}
 };
 
