@@ -612,8 +612,23 @@ public:
  * http://leetcode.com/onlinejudge#question_97
  */
 	// Work in progress
+private:
+	unsigned int s1len;
+	unsigned int s2len;
+	unsigned int s3len;
+
+	bool constructStep(const string& s1, unsigned int p1, const string& s2, unsigned int p2, const string& s3) {
+		if (p1 + p2 == s3len && p1 == s1len && p2 == s2len) return true;
+		return (s1len > p1 && s1[p1] == s3[p1 + p2] ? constructStep(s1, p1 + 1, s2, p2, s3) : false) ||
+		(s2len > p2 && s2[p2] == s3[p1 + p2] ? constructStep(s1, p1, s2, p2 + 1, s3) : false);
+	}
+public:
 	bool isInterleave(string s1, string s2, string s3) {
-		return false;
+		s1len = s1.length();
+		s2len = s2.length();
+		s3len = s3.length();
+		if (s3len != s2len + s1len) return false;
+		return constructStep(s1, 0, s2, 0, s3);
 	}
 
 /*
